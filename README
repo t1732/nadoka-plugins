@@ -1,0 +1,8 @@
+IRC nadoka plugins
+
+・urltitle_getbot.nb
+実行にはnokogiriが必要です
+  $ gem install nokogiri
+
+description:
+  http〜の発言があった場合にそのURL先のHTML titleを取得して表示する

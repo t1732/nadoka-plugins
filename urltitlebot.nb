@@ -1,0 +1,31 @@
+#--
+# Copyright (c) 2011- t1732 (https://github.com/t1732)
+#
+require 'rubygems'
+require 'nokogiri'
+require 'open-uri'
+require 'nkf'
+
+class UrlTitleBot < Nadoka::NDK_Bot
+
+  def bot_initialize
+    @available_channel = @bot_config[:ch] || /.*/
+    @user_agent = "Mozilla/5.0 (Macintosh; U; Intel Mac OS X 10_6_3; en-US) AppleWebKit/533.4 (KHTML, like Gecko) Chrome/5.0.375.55 Safari/533.4"
+  end
+
+  def on_privmsg(prefix, ch, msg)
+    return unless @available_channel === ch
+#    @logger.slog "current channel: #{ch}"
+
+    if msg =~ %r/(http:\/\/.*)/
+      url = $1
+      doc = Nokogiri::HTML(open(url.gsub("　", " ").split(" ").first, {"User-Agent" => @user_agent}).read)
+      title = doc.search("title").inner_text
+      title = title.strip.gsub("\r\n", " ")
+      unless title == ""
+        send_notice(ch, "  => #{title.tojis}")
+      end
+    end
+  end
+
+end
