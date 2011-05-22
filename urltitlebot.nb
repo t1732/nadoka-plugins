@@ -18,11 +18,11 @@ class UrlTitleBot < Nadoka::NDK_Bot
     if msg.gsub("　", " ") =~ %r/(http|https)(:\/\/\S*).*/
       url = "#{$1}#{$2}"
       html = open(url, {"User-Agent" => @user_agent}).read
+      html.gsub!(%r/(\r\n|\r|\n)/, " ")
 
       title = ""
       if html =~ %r/<title>(.*)<\/title>/
         title = $1
-        title = title.gsub(%r/(\r\n|\r|\n)/, " ").strip
       end
 
       unless title.length.zero?
