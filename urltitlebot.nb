@@ -26,7 +26,8 @@ class UrlTitleBot < Nadoka::NDK_Bot
       end
 
       unless title.length.zero?
-        send_notice(ch, "  => #{title.tojis}")
+        converted_title = NKF.nkf('-j', title)
+        send_notice(ch, "  => #{converted_title}")
       end
     end
   end
