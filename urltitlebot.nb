@@ -20,13 +20,26 @@ class UrlTitleBot < Nadoka::NDK_Bot
       html = open(url, {"User-Agent" => @user_agent}).read
       html.gsub!(%r/(\r\n|\r|\n)/, " ")
 
+      nkf_option = '-j '
+      if html =~ %r/charset=([a-zA-z_-]+)/
+        nkf_option <<
+          case $1
+          when 'ISO-2022-JP'
+            '-J'
+          when 'EUC-JP'
+            '-E'
+          when 'Shift_JIS'
+            '-S'
+          end
+      end
+
       title = ""
       if html =~ %r/<title>(.*)<\/title>/
         title = $1
       end
 
       unless title.length.zero?
-        converted_title = NKF.nkf('-j', title)
+        converted_title = NKF.nkf(nkf_option, title)
         send_notice(ch, "  => #{converted_title}")
       end
     end
