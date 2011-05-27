@@ -15,22 +15,14 @@ class UrlTitleBot < Nadoka::NDK_Bot
     return unless @available_channel === ch
 #    @logger.slog "current channel: #{ch}"
 
-    if msg.gsub("　", " ") =~ %r/(http|https)(:\/\/\S*).*/
+    if msg.gsub("　", " ") =~ %r/(http|https)(:\/\/\S*).*(?!(jpg|jpeg|gif|png|bmp|swf))/
       url = "#{$1}#{$2}"
       html = open(url, {"User-Agent" => @user_agent}).read
       html.gsub!(%r/(\r\n|\r|\n)/, " ")
 
-      nkf_option = '-j '
+      nkf_option = '-j'
       if html =~ %r/charset=([a-zA-z_-]+)/
-        nkf_option <<
-          case $1
-          when 'ISO-2022-JP'
-            '-J'
-          when 'EUC-JP'
-            '-E'
-          when 'Shift_JIS'
-            '-S'
-          end
+        nkf_option << add_option($1)
       end
 
       title = ""
@@ -42,6 +34,23 @@ class UrlTitleBot < Nadoka::NDK_Bot
         converted_title = NKF.nkf(nkf_option, title)
         send_notice(ch, "  => #{converted_title}")
       end
+    end
+  end
+
+  private
+
+  def add_option(charset)
+    case charset
+    when 'ISO-2022-JP'
+      ' -J'
+    when 'EUC-JP', 'euc-jp'
+      ' -E'
+    when 'Shift_JIS', 'shift_jis'
+      ' -S'
+    when 'UTF-8', 'utf-8'
+      ' -W'
+    else
+      ''
     end
   end
 
