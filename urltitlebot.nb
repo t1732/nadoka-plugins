@@ -12,7 +12,7 @@ class UrlTitleBot < Nadoka::NDK_Bot
   end
 
   def on_privmsg(prefix, ch, msg)
-    return unless @available_channel === ch
+    return unless @available_channel === NKF.nkf('-w', ch)
 #    @logger.slog "current channel: #{ch}"
 
     if msg.gsub("　", " ") =~ %r/(http|https)(:\/\/\S*).*(?!(jpg|jpeg|gif|png|bmp|swf))/
@@ -40,17 +40,15 @@ class UrlTitleBot < Nadoka::NDK_Bot
   private
 
   def add_option(charset)
-    case charset
+    case charset.upcase
     when 'ISO-2022-JP'
       ' -J'
-    when 'EUC-JP', 'euc-jp'
-      ' -E'
-    when 'Shift_JIS', 'shift_jis'
+    when 'SHIFT_JIS'
       ' -S'
-    when 'UTF-8', 'utf-8'
+    when 'UTF-8'
       ' -W'
     else
-      ''
+      ' -E'
     end
   end
 
