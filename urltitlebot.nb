@@ -21,7 +21,7 @@ class UrlTitleBot < Nadoka::NDK_Bot
       html.gsub!(%r/(\r\n|\r|\n)/, " ")
 
       nkf_option = '-j'
-      if html =~ %r/charset=([a-zA-z_-]+)/
+      if html =~ %r/charset=([a-zA-z_\-8]+)/
         nkf_option << add_option($1)
       end
 
