@@ -25,14 +25,15 @@ class UrlTitleBot < Nadoka::NDK_Bot
         nkf_option << add_option($1)
       end
 
+      converted_html = NKF.nkf(nkf_option, html)
+
       title = ""
-      if html =~ %r/<title>(.*)<\/title>/
+      if converted_html =~ %r/<title>(.*)<\/title>/
         title = $1
       end
 
       unless title.length.zero?
-        converted_title = NKF.nkf(nkf_option, title)
-        send_notice(ch, "  => #{converted_title}")
+        send_notice(ch, "  => #{title}")
       end
     end
   end
