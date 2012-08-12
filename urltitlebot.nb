@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 #--
 # Copyright (c) 2011- t1732 (https://github.com/t1732)
 #
@@ -15,25 +16,26 @@ class UrlTitleBot < Nadoka::NDK_Bot
     return unless @available_channel === NKF.nkf('-w', ch)
 #    @logger.slog "current channel: #{ch}"
 
-    if msg.gsub("　", " ") =~ %r/(http|https)(:\/\/\S*).*(?!(jpg|jpeg|gif|png|bmp|swf))/
-      url = "#{$1}#{$2}"
-      html = open(url, {"User-Agent" => @user_agent}).read
-      html.gsub!(%r/(\r\n|\r|\n)/, " ")
+    URI.extract(msg.gsub(%r/(http|https)/, "\nhttp")).each do |url|  # URL取り出す
+      unless url =~ /(jpg|jpeg|gif|png|bmp|swf)$/                    # 画像じゃなければ
+        url = "#{$1}#{$2}"
+        html = open(url, {"User-Agent" => @user_agent}).read
+        html.gsub!(%r/(\r\n|\r|\n)/, " ")
 
-      nkf_option = '-j'
-      if html =~ %r/charset=([a-zA-z_\-8]+)/
+        nkf_option = '-j'
+        html =~ %r/charset=([a-zA-z_\-8]+)/
         nkf_option << add_option($1)
-      end
 
-      converted_html = NKF.nkf(nkf_option, html)
+        converted_html = NKF.nkf(nkf_option, html)
 
-      title = ""
-      if converted_html =~ %r/<title>(.*)<\/title>/
-        title = $1
-      end
+        title = "ぬるぽ"
+        if converted_html =~ %r/<title>(.*?)<\/title>/
+          title = $1
+        end
 
-      unless title.length.zero?
-        send_notice(ch, "  => #{title}")
+        unless title.length.zero?
+          send_notice(ch, "  => #{title}")
+        end
       end
     end
   end
