@@ -6,8 +6,6 @@ require 'open-uri'
 require 'nkf'
 
 class Url2title < Nadoka::NDK_Bot
-  include SupportModule
-
   def bot_initialize
     @available_channel = @bot_config[:ch] || /.*/
     @user_agent = "Mozilla/5.0 (Macintosh; U; Intel Mac OS X 10_6_3; en-US) AppleWebKit/533.4 (KHTML, like Gecko) Chrome/5.0.375.55 Safari/533.4"
