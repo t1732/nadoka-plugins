@@ -15,7 +15,7 @@ class Url2title < Nadoka::NDK_Bot
     return unless @available_channel === NKF.nkf('-w', ch)
 #    @logger.slog "current channel: #{ch}"
 
-    URI.extract(str.gsub(%r/(http|https)/, "\nhttp")).each do |url|
+    URI.extract(msg.gsub(%r/(http|https)/, "\nhttp")).each do |url|
       unless url.nil? || (url =~ /(jpg|jpeg|gif|png|bmp|swf)$/)
         html = open(url, {"User-Agent" => @user_agent}).read
         html.gsub!(%r/(\r\n|\r|\n)/, " ")
