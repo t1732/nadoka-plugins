@@ -5,7 +5,7 @@
 require 'open-uri'
 require 'nkf'
 
-class UrlTitleBot < Nadoka::NDK_Bot
+class Url2Title < Nadoka::NDK_Bot
 
   def bot_initialize
     @available_channel = @bot_config[:ch] || /.*/
@@ -17,7 +17,7 @@ class UrlTitleBot < Nadoka::NDK_Bot
 #    @logger.slog "current channel: #{ch}"
 
     URI.extract(msg.gsub(%r/(http|https)/, "\nhttp")).each do |url|  # URL取り出す
-      unless url =~ /(jpg|jpeg|gif|png|bmp|swf)$/                    # 画像じゃなければ
+      unless url =~ /(jpg|jpeg|gif|png|bmp|swf)$/                    # 画像じゃなければp
         url = "#{$1}#{$2}"
         html = open(url, {"User-Agent" => @user_agent}).read
         html.gsub!(%r/(\r\n|\r|\n)/, " ")
