@@ -21,7 +21,7 @@ class Url2title < Nadoka::NDK_Bot
         html.gsub!(%r/(\r\n|\r|\n)/, " ")
 
         nkf_option = '-j'
-        html =~ %r/charset=([a-zA-z_\-8]+)/
+        html =~ %r/charset=([a-zA-z_\-8\"]+)/
         nkf_option << add_option($1)
 
         converted_html = NKF.nkf(nkf_option, html)
@@ -38,7 +38,8 @@ class Url2title < Nadoka::NDK_Bot
   private
 
   def add_option(charset)
-    case charset.upcase
+    charset.gsub!("\"", "")
+    case (charset || "").upcase
     when 'ISO-2022-JP'
       ' -J'
     when 'SHIFT_JIS'
