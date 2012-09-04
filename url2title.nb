@@ -17,20 +17,18 @@ class Url2title < Nadoka::NDK_Bot
 
     URI.extract(msg.gsub(%r/(http|https)/, "\nhttp")).each do |url|
       unless url.nil? || (url =~ /(jpg|jpeg|gif|png|bmp|swf)$/)
-        html = open(url, {"User-Agent" => @user_agent}).read
-        html.gsub!(%r/(\r\n|\r|\n)/, " ")
+        html = open(url, {"User-Agent" => @user_agent}).read.encode("utf-8", :invalid => :replace, :undef => :replace)
+        html.gsub!(%r/\r\n|\n\r|\n|\r/, " ")
 
         nkf_option = '-j'
         html =~ %r/charset=([a-zA-z_\-8\"]+)/
         nkf_option << add_option($1)
 
-        converted_html = NKF.nkf(nkf_option, html)
-
         title = "nullpo"
-        if converted_html =~ %r/<title>(.*?)<\/title>/
+        if html =~ %r/<title>(.*?)<\/title>/
           title = $1
         end
-        send_notice(ch, "  => #{title}")
+        send_notice(ch, "  => #{NKF.nkf(nkf_option, title)}")
       end
     end
   end
